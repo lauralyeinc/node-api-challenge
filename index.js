@@ -12,3 +12,12 @@ I need this code, but don't know where, perhaps should make some middleware, don
 
 Go code!
 */
+
+require('dotenv').config();
+const server = require('./server');
+
+const port = process.env.PORT || 6000; 
+
+server.listen(port, () =>{
+    console.log(`\n *** 🧚🏻 Magic working on localhost: ${port} 🧚🏻***\n`); 
+}); 
