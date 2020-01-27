@@ -96,6 +96,28 @@ router.get('/:id', (req, res) =>{
 //     });
 // });
 
+router.put('/:id', (req, res) => {
+    const changes = req.body;
+    const {id} = req.params;
+    if(!changes.name && !changes.description && !changes.completed) {
+        res.status(400).json({message: 'You must specify a name, a description, or mark this action completed.'})
+    } else {
+        actionsDB.update(id, changes)
+            .then(updated => {
+                if(updated === null) {
+                    res.status(404).json({message: `An action with the id#${id} was not found.`})
+                } else {
+                    res.status(200).json(updated);
+                }
+            })
+            .catch(err => {
+                res.status(500).json({ message: 'We were unable to update the action.', err })
+            })
+    }
+})
+
+
+
 // delete √√ 
 
 router.delete('/:id', (req, res) => {
