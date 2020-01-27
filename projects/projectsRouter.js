@@ -1,6 +1,7 @@
 const express = require('express');
 
 const projectDB = require('../data/helpers/projectModel.js');
+const actionsDB = require('../data/helpers/actionModel.js'); 
 
 const router = express.Router();
 
@@ -162,5 +163,44 @@ router.delete("/:id", (req, res) => {
         });
     });
 });
+
+
+// from actionsRouter.js  posting a new action to a project. √√ 
+router.post('/:id/actions', validatePost, (req, res) => {
+    const actionInfo = req.body;
+    actionInfo.project_id = req.params.id; 
+
+    actionsDB.insert(actionInfo)
+        .then(action => {
+        if(action) {
+            res.status(201).json({ action});
+        } else {
+            res.status(400).json({
+                message: ' Please provide a description and note for the new action.'
+            });
+            }
+        })
+        .catch(error => {
+            console.log(error); 
+            res.status(500).json({
+                message: ' There was an error while saving the new action.'
+            }); 
+        });
+});
+
+function validatePost(req, res, next) {
+    console.log(`req.body: `, req.body);
+    if (Object.keys(req.body).length > 0) {
+        if (req.body) {
+        next();
+        } else {
+        res
+            .status(400)
+            .json({ success: false, message: "Missing required text field" });
+        }
+    } else {
+        res.status(400).json({ success: false, message: "Missing post data." });
+    }
+}; 
 
 module.exports = router; 
